@@ -23,6 +23,8 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "formidable": "^1.2.1"
+    "formidable": "^1.2.1",
+    "uuid": "^3.3.2",
+    "zip-folder": "^1.0.0"
   }
 }
