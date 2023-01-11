@@ -12,6 +12,7 @@ app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.text());
 
+
 app.post('/uploader',(req,res)=>{
     let form = new formidable.IncomingForm();
     let id = uuid();
@@ -70,9 +71,12 @@ app.get('/:id/delete',(req,res)=>{
     }
     let code = req.query.code;
     let savedCode = fs.readFileSync(folder + '/delete.txt');
-    if (code == savedCode) {
+    if (!savedCode || code == savedCode) {
         removeFolder(folder);
-        fs.unlinkSync('zip/' + id + '.zip');
+        let zipPath = 'zip/' + id + '.zip';
+        if (fs.existsSync(zipPath)) {
+            fs.unlinkSync(zipPath);
+        }
         res.sendFile(__dirname + '/removed.html');
     } else {
         res.sendFile(__dirname + '/delete.html');

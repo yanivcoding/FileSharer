@@ -1,0 +1,102 @@
+
+* {
+    font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
+    
+}
+
+#files {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+label[for=files] {
+    font-size: 20px;
+    color: white;
+    background-color: red;
+    display: inline-block;
+    cursor: pointer;
+    padding: 7px;
+    border-radius: 6px;
+    margin: 20px;
+}
+
+label[for=files]:hover {
+    background-color: rgb(196, 13, 0);
+    box-shadow: 0px 0px 5px black;
+}
+
+input[type=text] {
+    padding: 12px 20px;
+    border-radius: 3px;
+    margin: 10px;
+    width: 220px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button, input[type=submit], input[type=button] {
+    padding: 8px;
+    font-size: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border: 1px solid black;
+    margin: 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    outline: none;
+}
+
+button:hover, input[type=submit]:hover, input[type=button]:hover {
+    background-color: rgb(163, 163, 163);
+    box-shadow: 0px 3px 8px gray;
+}
+
+button:active, input[type=submit]:active, input[type=button]:active {
+    transform: translateY(3px);
+    box-shadow: 0px 0px 8px gray;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+  
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 150px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 80%;
+    left: -25%;
+    opacity: 0;
+    transition: opacity 0.4s;
+    font-weight: bold;
+    text-transform: none;
+    font-size: 18px;
+    word-wrap: break-word;
+}
+  
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+  
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

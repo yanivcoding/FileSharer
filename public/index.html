@@ -1,19 +1,47 @@
 <html>
+    <head>
+        <title>FileSharer - Upload and share files easily!</title>
+        <link rel="stylesheet" type="text/css" href="styles.css"/>
+    </head>
     <body>
         <form method="dialog" onsubmit="uploadFiles()" id="upload">
-            <input type="file" required multiple name="files" id="files" /><br>
-            <input type="text" name="deleteCode" placeholder="Delete Code" /><br>
+            <input type="file" required multiple name="files" id="files" data-multiple-caption="{count} files selected" />
+            <label for="files">Choose Files..</label>
+            <br>
+            <input type="text" name="deleteCode" placeholder="Delete Code" autocomplete="off" /><br>
             <input type="submit" value="Upload!"/>
         </form>
         <br>
         <div id="result" style="display: none">
-            <span id="output"></span>
-            <br>
-            <button onclick="copyURL()">Copy</button>
+            <input type="text" id="output" readonly />
+            <div class="tooltip">
+                <button onclick="copyURL()" onmouseout="defaultTooltip()">
+                    <span class="tooltiptext" id="copyTooltip">Copy to clipboard</span>
+                    Copy
+                </button>
+            </div>
         </div>
-        <textarea style="position: absolute; left: -999px;" id="clipboard"></textarea>
     </body>
     <script>
+        
+        window.onload = ()=>{
+            let fileInput = document.getElementById('files');
+            let label = fileInput.nextElementSibling;
+            let val = label.innerHTML;
+            fileInput.onchange = e=>{
+                let fileName = '';
+                if (fileInput.files && fileInput.files.length > 1) {
+                    fileName = (fileInput.getAttribute('data-multiple-caption') || '').replace('{count}',fileInput.files.length);
+                } else {
+                    fileName = fileInput.value.split('\\').pop();
+                }
+                if (fileName) {
+                    label.innerHTML = fileName;
+                } else {
+                    label.innerHTML = val;
+                }
+            }
+        }
 
         let url = '';
 
@@ -22,17 +50,24 @@
             fetch('uploader',{method: 'POST', body: body})
             .then(async response=>{
                 url = await response.text();
-                document.getElementById('output').innerHTML = '<a href="' + url + '">' + url + '</a>';
+                document.getElementById('output').value = url;
                 document.getElementById('result').style.display = 'block';
             });
             return false;
         }
 
         function copyURL() {
-            let cb = document.getElementById('clipboard');
-            cb.innerText = url;
+            let cb = document.getElementById('output');
             cb.select();
             document.execCommand('copy');
+
+            let tooltip = document.getElementById('copyTooltip');
+            tooltip.innerHTML = "Copied: " + cb.value;
+        }
+
+        function defaultTooltip() {
+            let tooltip = document.getElementById('copyTooltip');
+            tooltip.innerHTML = "Copy to clipboard";
         }
     </script>
 </html>
