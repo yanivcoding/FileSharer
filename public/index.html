@@ -1,19 +1,38 @@
 <html>
     <body>
         <form method="dialog" onsubmit="uploadFiles()" id="upload">
-            <input type="file" required multiple name="files" id="files" />
+            <input type="file" required multiple name="files" id="files" /><br>
+            <input type="text" name="deleteCode" placeholder="Delete Code" /><br>
             <input type="submit" value="Upload!"/>
         </form>
-        <span id="output"></span>
+        <br>
+        <div id="result" style="display: none">
+            <span id="output"></span>
+            <br>
+            <button onclick="copyURL()">Copy</button>
+        </div>
+        <textarea style="position: absolute; left: -999px;" id="clipboard"></textarea>
     </body>
     <script>
+
+        let url = '';
+
         function uploadFiles() {
             let body = new FormData(document.forms.upload);
             fetch('uploader',{method: 'POST', body: body})
             .then(async response=>{
-                document.getElementById('output').innerText = await response.text();
+                url = await response.text();
+                document.getElementById('output').innerHTML = '<a href="' + url + '">' + url + '</a>';
+                document.getElementById('result').style.display = 'block';
             });
             return false;
+        }
+
+        function copyURL() {
+            let cb = document.getElementById('clipboard');
+            cb.innerText = url;
+            cb.select();
+            document.execCommand('copy');
         }
     </script>
 </html>

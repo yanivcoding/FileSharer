@@ -1,0 +1,17 @@
+<html>
+    <body>
+        <form method="get">
+            <output id="out"></output><br>
+            <input type="text" name="code" placeholder="Enter Delete Code..."><br>
+            <input type="submit" value="Delete Files">
+        </form>
+        <script>
+            window.onload = ()=>{
+                let code = new URLSearchParams(window.location.search).get('code');
+                if (code) {
+                    document.getElementById('out').innerText = "Invalid delete code!";
+                }
+            }
+        </script>
+    </body>
+</html>

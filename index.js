@@ -13,40 +13,70 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.text());
 
 app.post('/uploader',(req,res)=>{
-    let form = formidable.IncomingForm();
+    let form = new formidable.IncomingForm();
     let id = uuid();
     let dir = 'uploads/' + id;
     fs.mkdirSync(dir);
+    dir += '/content';
+    fs.mkdirSync(dir);
+    form.on('field',(name,value)=>{
+        if (name == 'deleteCode') {
+            fs.writeFileSync('uploads/' + id + '/delete.txt',value);
+        }
+    });
     form.on('file', (field, file)=>{
         let oldPath = file.path;
         let newPath = dir + "/" + file.name;
-        fs.writeFileSync(__dirname + '/' + newPath, fs.readFileSync(oldPath));
+        fs.writeFileSync(newPath, fs.readFileSync(oldPath));
     });
     form.on('end',()=>{
-        res.end(getURL(req) + '/' + id);
+        res.send(getURL(req) + '/' + id);
     });
     form.parse(req);
 });
 
 app.get('/:id',(req,res)=>{
     let id = req.params.id;
-    let folder = __dirname + '/uploads/' + id;
+    let folder = 'uploads/' + id + '/content';
+    if (!fs.existsSync(folder)) {
+        res.status(404).send("Shared file/s with this id have been removed.");
+        return;
+    }
     let files = fs.readdirSync(folder);
     if (files.length > 1) {
-        let dest = __dirname + '/zip/' + id + ".zip";
+        let dest = 'zip/' + id + ".zip";
         if (fs.existsSync(dest)) {
-            res.sendFile(dest);
+            console.log("downloading existing zip");
+            res.download(dest);
         } else {
             console.log("generating zip...");
             zipFolder(folder,dest,(err)=>{
                 if (err) throw err;
-                res.sendFile(dest);
+                res.download(dest);
             });
         }
     } else {
-        res.sendFile(folder + '/' + files[0]);
+        let fn = folder + '/' + files[0];
+        res.download(fn);
     }
-    
+});
+
+app.get('/:id/delete',(req,res)=>{
+    let id = req.params.id;
+    let folder = 'uploads/' + id;
+    if (!fs.existsSync(folder)) {
+        res.send('Shared file/s with this id have been removed.');
+        return;
+    }
+    let code = req.query.code;
+    let savedCode = fs.readFileSync(folder + '/delete.txt');
+    if (code == savedCode) {
+        removeFolder(folder);
+        fs.unlinkSync('zip/' + id + '.zip');
+        res.sendFile(__dirname + '/removed.html');
+    } else {
+        res.sendFile(__dirname + '/delete.html');
+    }
 });
 
 app.listen(port, ()=>{
@@ -55,4 +85,18 @@ app.listen(port, ()=>{
 
 function getURL(req) {
     return req.protocol + '://' + req.get('host');
+}
+
+function removeFolder(path) {
+    if(fs.existsSync(path)) {
+        fs.readdirSync(path).forEach((file)=>{
+          var curPath = path + "/" + file;
+            if(fs.lstatSync(curPath).isDirectory()) {
+                removeFolder(curPath);
+            } else {
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
 }
