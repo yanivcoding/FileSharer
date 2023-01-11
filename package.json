@@ -1,0 +1,27 @@
+{
+  "name": "filesharer",
+  "version": "1.0.0",
+  "description": "A simple platform for sharing files easily",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shinyb123/FileSharer.git"
+  },
+  "keywords": [
+    "files",
+    "share"
+  ],
+  "author": "TheShinyBunny",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shinyb123/FileSharer/issues"
+  },
+  "homepage": "https://github.com/shinyb123/FileSharer#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  }
+}
